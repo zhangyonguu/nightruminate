@@ -1,0 +1,51 @@
+2018-06-21 01:01:55,302 ERROR: Exception on /search_friend [GET] [in /home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1974, in make_response
+    rv = self.response_class.force_type(rv, request.environ)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 921, in force_type
+    response = BaseResponse(*_run_wsgi_app(response, environ))
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 59, in _run_wsgi_app
+    return _run_wsgi_app(*args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/test.py", line 923, in run_wsgi_app
+    app_rv = app(environ, start_response)
+TypeError: 'User' object is not callable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1816, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1831, in finalize_request
+    response = self.make_response(rv)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in make_response
+    reraise(TypeError, new_error, sys.exc_info()[2])
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/_compat.py", line 34, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1974, in make_response
+    rv = self.response_class.force_type(rv, request.environ)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 921, in force_type
+    response = BaseResponse(*_run_wsgi_app(response, environ))
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 59, in _run_wsgi_app
+    return _run_wsgi_app(*args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/test.py", line 923, in run_wsgi_app
+    app_rv = app(environ, start_response)
+TypeError: 'User' object is not callable
+The view function did not return a valid response. The return type must be a string, tuple, Response instance, or WSGI callable, but it was a User.
+2018-06-21 01:06:05,200 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 01:07:55,807 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 01:09:47,255 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 01:12:30,629 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 01:12:40,597 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 01:13:04,209 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:36:30,706 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:38:13,864 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:47:49,036 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:49:31,930 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:52:58,236 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:54:02,695 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 03:54:56,983 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 04:02:02,667 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 04:08:20,603 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 09:10:24,347 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]

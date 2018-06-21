@@ -1,0 +1,102 @@
+2018-06-21 00:03:56,725 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:04:08,535 ERROR: Exception on /search [GET] [in /home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
+    raise value
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/app/main/routes.py", line 75, in search
+    posts, total = Post.search(g.search_form.q.data, page, current_app.config['POSTS_PER_PAGE'])
+NameError: name 'Post' is not defined
+2018-06-21 00:06:05,675 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:18:25,389 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:23:04,450 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:23:46,843 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:39:25,145 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:40:19,653 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:41:51,489 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:44:10,680 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:47:02,338 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:47:14,582 ERROR: Exception on /search_friend [GET] [in /home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
+    raise value
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+TypeError: search_friend() missing 1 required positional argument: 'username'
+2018-06-21 00:49:22,487 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:49:33,989 ERROR: Exception on /search_friend [GET] [in /home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
+    raise value
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+TypeError: search_friend() missing 1 required positional argument: 'username'
+2018-06-21 00:55:40,319 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:59:35,522 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]
+2018-06-21 00:59:52,783 ERROR: Exception on /search_friend [GET] [in /home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1974, in make_response
+    rv = self.response_class.force_type(rv, request.environ)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 921, in force_type
+    response = BaseResponse(*_run_wsgi_app(response, environ))
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 59, in _run_wsgi_app
+    return _run_wsgi_app(*args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/test.py", line 923, in run_wsgi_app
+    app_rv = app(environ, start_response)
+TypeError: 'User' object is not callable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1816, in full_dispatch_request
+    return self.finalize_request(rv)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1831, in finalize_request
+    response = self.make_response(rv)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in make_response
+    reraise(TypeError, new_error, sys.exc_info()[2])
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/_compat.py", line 34, in reraise
+    raise value.with_traceback(tb)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/flask/app.py", line 1974, in make_response
+    rv = self.response_class.force_type(rv, request.environ)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 921, in force_type
+    response = BaseResponse(*_run_wsgi_app(response, environ))
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/wrappers.py", line 59, in _run_wsgi_app
+    return _run_wsgi_app(*args)
+  File "/home/zhangyonguu/PycharmProjects/nightruminate/venv/lib/python3.6/site-packages/werkzeug/test.py", line 923, in run_wsgi_app
+    app_rv = app(environ, start_response)
+TypeError: 'User' object is not callable
+The view function did not return a valid response. The return type must be a string, tuple, Response instance, or WSGI callable, but it was a User.
+2018-06-21 01:01:41,008 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:70]

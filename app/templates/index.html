@@ -1,0 +1,80 @@
+{% extends "base.html" %} {% import 'bootstrap/wtf.html' as wtf %} {% block app_content %}
+<h1>Hi,{{ current_user.name }}</h1>
+{% if form %}
+<div class="row">
+    <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+    </div>
+</div>
+{% endif %}
+
+<ul>
+    <li><button>Read my Story</button></li>
+    <li><button>write A Story</button></li>
+    <li><button>Ask for share</button></li>
+    <li><button>Share to friends</button></li>
+    <li><button>Open my heart</button></li>
+    <div class="container">
+        <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">添加好友</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">查找好友</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name='friend'>
+                            <input type='text' , placeholder='输入好友用户名' , name="friend_input"></input>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="addFriend()">查询</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <li><button>Friends list</button></li>
+</ul>
+
+{% endblock %} {% block scripts %} {{ super() }}
+<script>
+    function addFriend() {
+        console.log('hello')
+        var txt;
+        var person = friend.friend_input.value;
+        if (person == null || person == "") {
+            alert('没有输入用户名');
+        } else {
+            $.get('/search_friend', {
+                username: person,
+            }).done(function(response) {
+                if (response['result_status'] == 'existed') {
+                    alert('你们已经是好友了！')
+                } else {
+                    if (confirm('确定添加好友？')) {
+                        $.get('/request_add_friend', {
+                            username: person,
+                        }).done(function(response) {
+                            console.log('request success')
+                        }).fail(function(response) {
+                            console.log('request fail')
+                        })
+                    } else {
+                        alert('你取消了加好友。')
+                    }
+                }
+            }).fail(function(response) {
+                alert('error code:' + response.status);
+            });
+        }
+    }
+</script>
+{% endblock %}
