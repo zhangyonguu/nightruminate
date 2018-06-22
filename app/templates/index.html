@@ -47,7 +47,6 @@
 {% endblock %} {% block scripts %} {{ super() }}
 <script>
     function addFriend() {
-        console.log('hello')
         var txt;
         var person = friend.friend_input.value;
         if (person == null || person == "") {
@@ -56,8 +55,8 @@
             $.get('/search_friend', {
                 username: person,
             }).done(function(response) {
-                if (response['result_status'] == 'existed') {
-                    alert('你们已经是好友了！')
+                if (response['status'] == 0) {
+                    alert(response['search_result']);
                 } else {
                     if (confirm('确定添加好友？')) {
                         $.get('/request_add_friend', {

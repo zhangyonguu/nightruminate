@@ -7,12 +7,11 @@ from flask import jsonify
 from app.translate import translate
 from app.main import bp
 from app.main.forms import EditProfileForm, SearchForm
-from ..models import User, Message, MessageType
+from ..models import User, Message, MessageType, Notification
 
 @bp.before_request
 def before_request():
     if current_user.is_authenticated:
-        print(current_user)
         current_user.last_seen = datetime.utcnow()
         current_user.save()
         g.search_form = SearchForm()
@@ -32,57 +31,54 @@ def user(username):
     return render_template('user.html', user=user)
 
 
-@bp.route('/edit_profile', methods=['GET', 'POST'])
+@bp.route('/search_friend')
 @login_required
-def edit_profile():
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
-        db.session.commit()
-        flash(_('your changes have saved'))
-        return redirect(url_for('main.edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title=_('Edit Profile'), form=form)
+def search_friend():
+    username = request.args.get('username')
+    user = User.objects(name=username).first()
+    if user is not None:
+        if user.id == current_user.id:
+            return jsonify({'status': 0, 'search_result': "这是你的用户名"})
+        elif user.id not in current_user.friends:
+            return jsonify({'status': 1, 'search_result': '找到用户'})
+        else:
+            return jsonify({'status': 0, 'search_result': '该用户已经是你的好友'})
+    else:
+        return jsonify({'status': 0, 'search_result': '用户名不存在'})
 
 
 @bp.route('/search')
 @login_required
 def search():
-    if not g.search_form.validate():
-        return redirect(url_for('main.explore'))
-    page = request.args.get('page', 1, type=int)
-    posts, total = Post.search(g.search_form.q.data, page, current_app.config['POSTS_PER_PAGE'])
-    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
-        if total > page * current_app.config['POSTS_PER_PAGE'] else None
-    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
-        if page > 1 else None
-    return render_template('search.html', title=_('Search'), posts=posts,
-                           next_url=next_url, prev_url=prev_url)
-
-
-@bp.route('/search_friend')
-@login_required
-def search_friend():
-    print('search friend')
-    username = request.args.get('username')
-    user = User.objects(name=username).first()
-    if user is not None:
-        if user.id not in current_user.friends:
-            return jsonify({'result_status': 'found', 'name': username, })
-        else:
-            return jsonify({'result_status': 'existed'})
+    pass
 
 
 @bp.route('/request_add_friend')
 @login_required
 def request_add_friend():
-    print('request add friend')
     username = request.args.get('username')
-    user = User.objects(name=username).first()
-    current_user.send_message(int(MessageType.AddFriend), user.id)
+    current_user.send_message(MessageType.AddFriend.fullname, username)
+    return jsonify({'result_status': 'sent'})
+
+
+@bp.route('/agree_add_friend')
+@login_required
+def agree_add_friend():
+    message_id = request.args.get('message_id')
+    message = Message.objects(id=message_id).first()
+    message.update(set__dealed=True)
+    current_user.send_message(MessageType.Accept.fullname, message.sender)
+    current_user.add_friend(message.sender)
+    return jsonify({'result_status': 'sent'})
+
+
+@bp.route('/refuse_add_friend')
+@login_required
+def refuse_add_friend():
+    message_id = request.args.get('message_id')
+    message = Message.objects(id=message_id).first()
+    message.update(set__dealed=True)
+    current_user.send_message(MessageType.Refuse.fullname, message.sender)
     return jsonify({'result_status': 'sent'})
 
 
@@ -97,9 +93,10 @@ def user_popup(username):
 @login_required
 def messages():
     current_user.update(set__last_message_read_time=datetime.utcnow())
+    current_user.add_notification('unread_message_count', 0)
     current_user.reload()
     page = request.args.get('page', 1, type=int)
-    messages = Message.objects(recipient_id=current_user.id).order_by('-timestamp').\
+    messages = Message.objects(recipient=current_user.name).order_by('-timestamp').\
         paginate(page=page, per_page=current_app.config['POSTS_PER_PAGE'])
     next_url = url_for('main.messages', page=messages.next_num) if messages.has_next else None
     prev_url = url_for('main.messages', page=messages.prev_num) if messages.has_prev else None
@@ -111,8 +108,8 @@ def messages():
 @login_required
 def notifications():
     since = request.args.get('since', 0.0, type=float)
-    notifications = current_user.notifications.filter(Notification.timestamp > since).\
-        order_by(Notification.timestamp.asc())
+    notifications = Notification.objects(timestamp__gt=since).\
+        order_by('timestamp')
     return jsonify([{
         'name': n.name,
         'data': n.get_data(),

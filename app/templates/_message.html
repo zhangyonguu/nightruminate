@@ -1,0 +1,15 @@
+<table class="table table-hover">
+    <tr>
+        <td>
+            <a href="{{ url_for('main.user', username=message.sender) }}">{{ message.sender }}</a>
+            <br> {{ moment(message.timestamp).fromNow() }}
+            <br>
+            <span>{{ message.content }}</span><br> {% if not message.dealed and message.content.startswith('请求') %}
+            <div id="{{ message.id }}">
+                <button onclick="agree_add_friend()">同意</button>
+                <button onclick="refuse_add_friend()">拒绝</button>
+            </div>
+            {% endif %}
+        </td>
+    </tr>
+</table>
