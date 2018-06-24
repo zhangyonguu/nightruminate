@@ -10,7 +10,7 @@
 
 <ul>
     <li><button>Read my Story</button></li>
-    <li><button>write A Story</button></li>
+    <a href="{{ url_for('main.write_story') }}">Write Story</a>
     <li><button>Ask for share</button></li>
     <li><button>Share to friends</button></li>
     <li><button>Open my heart</button></li>
@@ -41,7 +41,11 @@
             </div>
         </div>
     </div>
-    <li><button>Friends list</button></li>
+    <p>-----------------</p>
+    <li><b>Friends list</b></li>
+    {% for friend in friends %}
+    <a href="{{ url_for('main.user', username=friend) }}"> {{ friend }}</a><button>求分享</button><br>
+    {% endfor %}
 </ul>
 
 {% endblock %} {% block scripts %} {{ super() }}

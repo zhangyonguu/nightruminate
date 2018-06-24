@@ -1,13 +1,13 @@
-
 from flask import render_template, flash, redirect, url_for, request, g, current_app
 from flask_login import current_user, login_user, logout_user, login_required
-
 from datetime import datetime
 from flask import jsonify
 from app.translate import translate
 from app.main import bp
 from app.main.forms import EditProfileForm, SearchForm
-from ..models import User, Message, MessageType, Notification
+from ..models import User, Message, MessageType, Notification, StoryForm, Story
+from mongoengine.queryset.visitor import Q
+
 
 @bp.before_request
 def before_request():
@@ -21,7 +21,9 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title='Home Page')
+    friends = current_user.friends
+    friends = [User.objects(id=friend).first().name for friend in friends]
+    return render_template('index.html', title='Home Page', friends=friends)
 
 
 @bp.route('/username/<username>')
@@ -29,6 +31,12 @@ def index():
 def user(username):
     user = User.objects(name=username).first()
     return render_template('user.html', user=user)
+
+
+@bp.route('/edit_profile')
+@login_required
+def edit_profile():
+    return render_template('')
 
 
 @bp.route('/search_friend')
@@ -45,6 +53,25 @@ def search_friend():
             return jsonify({'status': 0, 'search_result': '该用户已经是你的好友'})
     else:
         return jsonify({'status': 0, 'search_result': '用户名不存在'})
+
+
+@bp.route('/write_story', methods=['GET', 'POST'])
+@login_required
+def write_story():
+    print(request.form)
+    form = StoryForm(request.form)
+    print('field:')
+    print(form.__dict__)
+    print(request.method)
+    print(form.formdata)
+    if request.method == 'POST' and form.validate():
+        print('post')
+        story = Story(form.formdata)
+        story.save()
+        print('form:')
+        print(form)
+        return redirect('main.index', form=form)
+    return render_template('write_story.html', form=form)
 
 
 @bp.route('/search')
@@ -107,8 +134,8 @@ def messages():
 @bp.route('/notifications')
 @login_required
 def notifications():
-    since = request.args.get('since', 0.0, type=float)
-    notifications = Notification.objects(timestamp__gt=since).\
+    since = request.args.get('since', datetime(1970, 1, 1), type=float)
+    notifications = Notification.objects(Q(timestamp__gt=since) & Q(recipient=current_user.name)).\
         order_by('timestamp')
     return jsonify([{
         'name': n.name,
