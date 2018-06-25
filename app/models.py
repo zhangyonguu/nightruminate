@@ -6,7 +6,8 @@ from datetime import datetime
 from enum import Enum, unique
 from mongoengine.queryset.visitor import Q
 import json
-
+from flask_mongoengine.wtf import model_form
+from wtforms import validators
 
 @unique
 class MessageType(Enum):
@@ -64,9 +65,9 @@ class User(UserMixin, db.Document):
 
     def send_message(self, message_content, recipient):
         message = Message(sender=self.name, recipient=recipient, content=message_content)
+        message.save()
         user = User.objects(name=recipient).first()
         user.add_notification('unread_message_count', user.new_messages())
-        message.save()
 
     def add_notification(self, name, data):
         Notification.objects(name=name).delete()
@@ -80,6 +81,26 @@ class User(UserMixin, db.Document):
 @login.user_loader
 def load_user(uid):
     return User.objects(id=uid).first()
+
+
+class Comment(db.EmbeddedDocument):
+    author = db.StringField(required=True)
+    body = db.StringField(required=True, max_length=140)
+    timestamp = db.DateTimeField(default=datetime.utcnow)
+
+
+class Story(db.Document):
+    title = db.StringField(required=True)
+    author = db.LazyReferenceField(User)
+    comments = db.ListField(db.EmbeddedDocumentField(Comment))
+    body = db.StringField(required=True)
+    tags = db.ListField(db.StringField(max_length=20), default=[])
+
+
+StoryForm = model_form(Story, field_args={'title': {'validators': [validators.Length(140),
+                                                                   validators.required()]},
+                                          'body': {'validators': [validators.required()]}
+                                          })
 
 
 class Message(db.Document):

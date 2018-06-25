@@ -3,7 +3,6 @@ from config import Config
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
-from flask_pymongo import PyMongo
 from flask_mongoengine import MongoEngine
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import logging
