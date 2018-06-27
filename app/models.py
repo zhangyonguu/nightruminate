@@ -9,14 +9,16 @@ import json
 from flask_mongoengine.wtf import model_form
 from wtforms import validators
 
+
 @unique
 class MessageType(Enum):
     AddFriend = 0, '请求加你为好友'
     AskShare = 1, '请求分享'
-    OpenHeart = 2, '敞开心扉'
-    CloseHeart = 3, '关闭心扉'
-    Accept = 4, '接受你的请求'
-    Refuse = 5, '拒绝你的请求'
+    Share = 2, '向你分享'
+    OpenHeart = 3, '对你敞开心扉'
+    CloseHeart = 4, '关闭心扉'
+    Accept = 5, '接受你的请求'
+    Refuse = 6, '拒绝你的请求'
 
     def __new__(cls, value, name):
         member = object.__new__(cls)
@@ -32,8 +34,9 @@ class User(UserMixin, db.Document):
     name = db.StringField(max_length=20, required=True)
     email = db.StringField(max_length=255)
     pw_hash = db.StringField(max_length=255)
-    tags = db.ListField(db.StringField(max_length=20), default=[])
     friends = db.ListField(db.ObjectIdField(), default=[])
+    beloved = db.ListField(db.ObjectIdField(), default=[])
+    be_beloved = db.ListField(db.ObjectIdField(), default=[])
     last_seen = db.DateTimeField(default=datetime.utcnow)
     last_message_read_time = db.DateTimeField()
     message_received = db.ListField(db.StringField(), default=[])
@@ -63,14 +66,15 @@ class User(UserMixin, db.Document):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
         return Message.objects(Q(timestamp__gt=last_read_time) & Q(recipient=self.name)).count()
 
-    def send_message(self, message_content, recipient):
-        message = Message(sender=self.name, recipient=recipient, content=message_content)
+    def send_message(self, message_content, recipient, pay_load={}):
+        message = Message(sender=self.name, recipient=recipient,
+                          content=message_content, pay_load=pay_load)
         message.save()
         user = User.objects(name=recipient).first()
         user.add_notification('unread_message_count', user.new_messages())
 
     def add_notification(self, name, data):
-        Notification.objects(name=name).delete()
+        Notification.objects(name=name, recipient=self.name).delete()
         n = Notification(name=name, payload_json=json.dumps(data), recipient=self.name)
         n.save()
 
@@ -92,21 +96,25 @@ class Comment(db.EmbeddedDocument):
 class Story(db.Document):
     title = db.StringField(required=True)
     author = db.LazyReferenceField(User)
-    comments = db.ListField(db.EmbeddedDocumentField(Comment))
+    comments = db.ListField(db.EmbeddedDocumentField(Comment), default=[])
     body = db.StringField(required=True)
+    timestamp = db.DateTimeField(default=datetime.utcnow)
     tags = db.ListField(db.StringField(max_length=20), default=[])
 
-
-StoryForm = model_form(Story, field_args={'title': {'validators': [validators.Length(140),
-                                                                   validators.required()]},
-                                          'body': {'validators': [validators.required()]}
-                                          })
+    meta = {'indexes': [
+        {
+            'fields': ['$title', '$body'],
+            'default_language': 'chinese',
+            'weights': {'title': 10, 'body': 2}
+        }
+    ]}
 
 
 class Message(db.Document):
     sender = db.StringField(required=True)
     recipient = db.StringField(required=True)
     content = db.StringField(required=True)
+    pay_load = db.DictField(default={})
     dealed = db.BooleanField(default=False)
     timestamp = db.DateTimeField(default=datetime.utcnow)
 

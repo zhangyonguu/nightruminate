@@ -54,3 +54,4 @@ The view function did not return a valid response. The return type must be a str
 2018-06-23 20:07:49,386 INFO: Ruminate startup [in /Users/apple/py-projects/nightruminate/app/__init__.py:69]
 2018-06-23 20:08:21,799 INFO: Ruminate startup [in /Users/apple/py-projects/nightruminate/app/__init__.py:69]
 2018-06-23 21:18:42,870 INFO: Ruminate startup [in /Users/apple/py-projects/nightruminate/app/__init__.py:69]
+2018-06-25 01:38:27,803 INFO: Ruminate startup [in /home/zhangyonguu/PycharmProjects/nightruminate/app/__init__.py:69]

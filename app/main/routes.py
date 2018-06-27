@@ -5,7 +5,8 @@ from flask import jsonify
 from app.translate import translate
 from app.main import bp
 from app.main.forms import EditProfileForm, SearchForm
-from ..models import User, Message, MessageType, Notification, StoryForm, Story
+from ..models import User, Message, MessageType, Notification, Story
+from .forms import StoryForm
 from mongoengine.queryset.visitor import Q
 
 
@@ -22,7 +23,7 @@ def before_request():
 @login_required
 def index():
     friends = current_user.friends
-    friends = [User.objects(id=friend).first().name for friend in friends]
+    friends = [User.objects(id=friend).first() for friend in friends]
     return render_template('index.html', title='Home Page', friends=friends)
 
 
@@ -30,7 +31,8 @@ def index():
 @login_required
 def user(username):
     user = User.objects(name=username).first()
-    return render_template('user.html', user=user)
+    storys = Story.objects(author=user.id).order_by('-timestamp')
+    return render_template('user.html', user=user, storys=storys)
 
 
 @bp.route('/edit_profile')
@@ -58,20 +60,65 @@ def search_friend():
 @bp.route('/write_story', methods=['GET', 'POST'])
 @login_required
 def write_story():
-    print(request.form)
-    form = StoryForm(request.form)
-    print('field:')
-    print(form.__dict__)
-    print(request.method)
-    print(form.formdata)
-    if request.method == 'POST' and form.validate():
-        print('post')
-        story = Story(form.formdata)
+    form = StoryForm()
+    if form.validate_on_submit():
+        story = Story(title=form.title.data,
+                      author=current_user.id,
+                      body=form.body.data,
+                      tags=form.tags.data)
         story.save()
-        print('form:')
-        print(form)
-        return redirect('main.index', form=form)
+        return redirect(url_for('main.storys'))
     return render_template('write_story.html', form=form)
+
+
+@bp.route('/my_story')
+@login_required
+def storys():
+    redirect = request.args.get('redirect')
+    next = request.args.get('next')
+    message = request.args.get('message')
+    recipient = request.args.get('recipient')
+    storys = Story.objects(author=current_user.id).order_by('-timestamp')
+    return render_template('storys.html', storys=storys, redirect=redirect,
+                           next=next, message=message, recipient=recipient)
+
+
+@bp.route('/story_detail/<story_id>')
+@login_required
+def story_detail(story_id):
+    story = Story.objects(id=story_id).first()
+    return render_template('story_detail.html', story=story)
+
+
+@bp.route('/ask_share', methods=['GET', 'POST'])
+@login_required
+def ask_share():
+    name = request.form['username']
+    print(name)
+    user = User.objects(name=name).first()
+    current_user.send_message(MessageType.AskShare.fullname, user.name)
+    return jsonify({'status': 1, 'result': '发送成功'})
+
+
+@bp.route('/open_heart', methods=['GET', 'POST'])
+@login_required
+def open_heart():
+    name = request.form['username']
+    user = User.objects(name=name).first()
+    if user is None:
+        return jsonify({'status': 0, 'result': '用户不存在或非好友'})
+    else:
+        if user.id in current_user.friends:
+            if user.id not in current_user.beloved:
+                current_user.send_message(MessageType.OpenHeart.fullname, user.name)
+                current_user.update(push__beloved=user.id)
+                current_user.save()
+                user.update(push__be_beloved=current_user.id)
+            return jsonify({'status': 1, 'result': '存在好友'})
+        elif user.id == current_user.id:
+            return jsonify({'status': 0, 'result': '这是你啊'})
+        else:
+            return jsonify({'status': 0, 'result': '用户不存在或非好友'})
 
 
 @bp.route('/search')
@@ -88,20 +135,51 @@ def request_add_friend():
     return jsonify({'result_status': 'sent'})
 
 
-@bp.route('/agree_add_friend')
+@bp.route('/share', methods=['GET', 'POST'])
 @login_required
-def agree_add_friend():
+def share():
+    story_title = request.form['title']
+    story_url = request.form['url']
+
+    recipient = request.form['recipient']
+    message_id = request.form['message']
+
+    if message_id != 'None':
+        message = Message.objects(id=message_id).first()
+        current_user.send_message(MessageType.Accept.fullname,
+                              message.sender, {'url': story_url, 'title': story_title})
+        message.update(set__dealed=True)
+    else:
+        recipient = User.objects(id=recipient).first()
+        current_user.send_message(MessageType.Share.fullname, recipient.name,
+                                  {'url': story_url, 'title': story_title})
+    next = request.form['next']
+
+    if next:
+        return redirect(next)
+    else:
+        return redirect('main.index')
+
+
+@bp.route('/agree_request')
+@login_required
+def agree_request():
     message_id = request.args.get('message_id')
     message = Message.objects(id=message_id).first()
-    message.update(set__dealed=True)
+    if message.content == MessageType.AddFriend.fullname:
+        current_user.add_friend(message.sender)
+    elif message.content == MessageType.AskShare.fullname:
+        return redirect(url_for('main.storys', redirect=1,
+                                next=url_for('main.messages'),
+                                message=message_id))
     current_user.send_message(MessageType.Accept.fullname, message.sender)
-    current_user.add_friend(message.sender)
+    message.update(set__dealed=True)
     return jsonify({'result_status': 'sent'})
 
 
-@bp.route('/refuse_add_friend')
+@bp.route('/refuse_request')
 @login_required
-def refuse_add_friend():
+def refuse_request():
     message_id = request.args.get('message_id')
     message = Message.objects(id=message_id).first()
     message.update(set__dealed=True)
@@ -134,7 +212,7 @@ def messages():
 @bp.route('/notifications')
 @login_required
 def notifications():
-    since = request.args.get('since', datetime(1970, 1, 1), type=float)
+    since = request.args.get('since')
     notifications = Notification.objects(Q(timestamp__gt=since) & Q(recipient=current_user.name)).\
         order_by('timestamp')
     return jsonify([{

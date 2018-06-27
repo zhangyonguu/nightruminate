@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block app_content %}
+{% extends "base.html" %} {% block title %} Messages {% endblock %} {% block app_content %}
 <h1>Messages</h1>
 {% for message in messages %} {% include '_message.html' %} {% endfor %}
 <nav aria-label="...">
@@ -17,45 +17,43 @@
 </nav>
 {% endblock %} {% block scripts %} {{ super() }}
 <script>
-    function agree_add_friend() {
-        var e = arguments.callee.caller.arguments[0] || window.event;
-        console.log(e)
-        obj = e.target || e.srcElement;
-        console.log(obj)
-        parent = obj.parentNode;
-        console.log(parent)
-        id = parent.getAttribute('id');
-        console.log(id)
-            // name = document.getElementById('sender').innerHTML;
-        $.get('/agree_add_friend', {
+    function agree_request(elem) {
+        console.log('-----')
+        console.log(location.href)
+        id = $(elem).parent().attr('id')
+        $.get('/agree_request', {
             message_id: id
         }).done(function(response) {
-            console.log('request success')
-            parent.innerHTML = "<p>已处理</p>"
+            if (response['result_status']) {
+                $(elem).parent().html("<p>已处理</p>");
+            } else {
+                console.log('++++++')
+                console.log(location.href)
+                console.log(history);
+                document.write(response)
+                document.close()
+                    // $('html').html(response)
+                console.log('request success')
+                console.log('++++++')
+                console.log(location.href)
+            }
         }).fail(function(response) {
             console.log('request fail')
-            parent.innerHTML = ""
+            $(elem).parent().html("<p>处理失败</p>");
         })
     }
 
-    function refuse_add_friend() {
-        var e = arguments.callee.caller.arguments[0] || window.event;
-        console.log(e)
-        obj = e.target || e.srcElement;
-        console.log(obj)
-        parent = obj.parentNode;
-        console.log(parent)
-        id = parent.getAttribute('id');
+    function refuse_request(elem) {
+        id = $(elem).parent().attr('id')
         console.log(id)
-            // name = document.getElementById('sender').innerHTML;
-        $.get('/refuse_add_friend', {
+        $.get('/refuse_request', {
             message_id: id
         }).done(function(response) {
             console.log('request success')
-            parent.innerHTML = "<p>已处理</p>"
+            $(elem).parent().html("<p>已处理</p>");
         }).fail(function(response) {
+            $(elem).parent().html("<p>处理失败</p>")
             console.log('request fail')
-            parent.innerHTML = ""
         })
     }
 </script>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %} {% block title %} {{ current_user.name }} - A Story {% endblock %} {% block content %}
+<p>{{ story.title }}</p>
+<br><br>
+<p>{{ story.tags }}</p>
+<br><br>
+<p>{{ story.body }}</p>
+<br><br>
+<p>{{ story.comments }}</p>
+{% endblock %} {% block scripts %} {{ super() }}
+<script>
+    $(function() {
+        console.log(location.href);
+        console.log(history)
+    })
+</script>
+{% endblock %}

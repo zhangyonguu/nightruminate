@@ -1,0 +1,58 @@
+{% extends 'base.html' %} {% block title %} {{ current_user.name }} - Story {% endblock %} {% block content %} {% if not redirect %}
+<div class="mb-4">
+    <a href="{{ url_for('main.write_story') }}" class="btn btn-primary">New Story</a>
+</div>
+{% endif %}
+
+<table class="table">
+    <thead class="thead-inverse">
+        <tr>
+            <th>Story</th>
+            <th>Comments</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for story in storys %}
+        <tr>
+            <td><a href="{{ url_for('main.story_detail', story_id=story.id) }}">{{ story.title }}</a></td>
+            <td>{{ story.comments | length }}</td>
+            {% if redirect %}
+            <td><button onclick="shareStory(this)" , data-message="{{ message }}" , data-next=" {{ next }}" , data-recipient="{{ recipient }}"> 分享</button></td>{% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %} {% block scripts %} {{ super() }}
+<script>
+    function shareStory(elem) {
+        var message_id = $(elem).attr('data-message').trim()
+        var recipient = $(elem).attr('data-recipient').trim()
+        var next_url = $(elem).attr('data-next').trim()
+        var title = $(elem).parent().siblings().children('a').text()
+        var url = $(elem).parent().siblings().children('a').attr('href')
+        console.log(message_id, next_url, title, recipient)
+        $.post('/share', {
+            message: message_id,
+            next: next_url,
+            recipient: recipient,
+            title: title,
+            url: url
+        }).done(function(response) {
+            // $('html').html(response)
+            document.write(response)
+            document.close()
+            console.log('request success')
+        }).fail(function(response) {
+            $('html').html(response)
+            console.log('request fail')
+        })
+    }
+
+    $(function() {
+        console.log('?????????')
+        console.log(location.href)
+        console.log(history)
+    })
+</script>
+{% endblock %}

@@ -1,8 +1,23 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, \
-    ValidationError, TextAreaField
+    ValidationError, TextAreaField, SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Length
 from flask import request
+
+tag_choices = [('1', '家庭'),
+               ('2', '为人'),
+               ('3', '认知'),
+               ('4', '生活'),
+               ('5', '处事'),
+               ('6', '育儿')]
+
+
+class StoryForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(max=140)])
+    tags = SelectMultipleField('Tags', choices=tag_choices,
+                               validators=[DataRequired()])
+    body = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('发表')
 
 
 class EditProfileForm(FlaskForm):
