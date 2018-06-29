@@ -8,7 +8,13 @@
             <p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
             {% endif %} {% if user == current_user %}
             <p><a href="{{ url_for('main.edit_profile') }}">编辑资料</a></p>
-            {% endif %} {% if current_user.id in user.beloved %}
+            {% endif %} {% if current_user.id in user.beloved %} {% if g.search_form %}
+            <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search', user=user.id) }}">
+                <div class="form-group">
+                    {{ g.search_form.q(size=20, class='form-control', placeholder=g.search_form.q.label.text) }}
+                </div>
+            </form>
+            {% endif %}
             <table class="table">
                 <thead class="thead-inverse">
                     <tr>

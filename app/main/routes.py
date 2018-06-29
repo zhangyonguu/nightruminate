@@ -124,7 +124,18 @@ def open_heart():
 @bp.route('/search')
 @login_required
 def search():
-    pass
+    if not g.search_form.validate():
+        return jsonify({'search_status': 0, "search_result": '输入无效'})
+    user_id = request.args.get('user')
+    q = g.search_form.q.data
+    print(q)
+    page = request.args.get('page', 1, type=int)
+    storys = Story.objects(author=user_id).search_text(q).order_by('$text_score').\
+        paginate(page=page, per_page=current_app.config['ITEMS_PER_PAGE'])
+    next_url = url_for('main.storys', page=storys.next_num) if storys.has_next else None
+    prev_url = url_for('main.storys', page=storys.prev_num) if storys.has_prev else None
+    return render_template('storys.html', storys=storys.items,
+                           next_url=next_url, prev_url=prev_url)
 
 
 @bp.route('/request_add_friend')
@@ -202,7 +213,7 @@ def messages():
     current_user.reload()
     page = request.args.get('page', 1, type=int)
     messages = Message.objects(recipient=current_user.name).order_by('-timestamp').\
-        paginate(page=page, per_page=current_app.config['POSTS_PER_PAGE'])
+        paginate(page=page, per_page=current_app.config['ITEMS_PER_PAGE'])
     next_url = url_for('main.messages', page=messages.next_num) if messages.has_next else None
     prev_url = url_for('main.messages', page=messages.prev_num) if messages.has_prev else None
     return render_template('messages.html', messages=messages.items,

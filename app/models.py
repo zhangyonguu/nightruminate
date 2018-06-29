@@ -104,10 +104,14 @@ class Story(db.Document):
     meta = {'indexes': [
         {
             'fields': ['$title', '$body'],
-            'default_language': 'chinese',
-            'weights': {'title': 10, 'body': 2}
+            'default_language': 'english',
+            'weights': {'title': 10, 'body': 10}
         }
     ]}
+
+    def __repr__(self):
+        return '<Story: author: {}, title: {}, body: {}>'.format(
+            self.author, self.title, self.body)
 
 
 class Message(db.Document):
