@@ -8,6 +8,9 @@ from app.main.forms import EditProfileForm, SearchForm
 from ..models import User, Message, MessageType, Notification, Story
 from .forms import StoryForm
 from mongoengine.queryset.visitor import Q
+from elasticsearch_dsl import Search
+from elasticsearch_dsl.query import MultiMatch
+from elasticsearch_dsl import Q as EQ
 
 
 @bp.before_request
@@ -124,17 +127,42 @@ def open_heart():
 @bp.route('/search')
 @login_required
 def search():
-    if not g.search_form.validate():
-        return jsonify({'search_status': 0, "search_result": '输入无效'})
     user_id = request.args.get('user')
-    q = g.search_form.q.data
-    print(q)
     page = request.args.get('page', 1, type=int)
-    storys = Story.objects(author=user_id).search_text(q).order_by('$text_score').\
-        paginate(page=page, per_page=current_app.config['ITEMS_PER_PAGE'])
-    next_url = url_for('main.storys', page=storys.next_num) if storys.has_next else None
-    prev_url = url_for('main.storys', page=storys.prev_num) if storys.has_prev else None
-    return render_template('storys.html', storys=storys.items,
+    q = request.args.get('q', '', type=str)
+    if q == '':
+        if not g.search_form.validate():
+            return jsonify({'search_status': 0, "search_result": '输入无效'})
+        else:
+            q = g.search_form.q.data
+
+    per_page = current_app.config['ITEMS_PER_PAGE']
+    start = (page - 1) * per_page
+    end = page * per_page
+    print(start, end, per_page, page)
+    eq = EQ('multi_match', query=q, fields=['title^3', 'body.cnw'])
+    s = Search(using=current_app.elasticsearch, index='ruminate.story').filter('term', author=user_id).query(eq)
+    response = s[start: end].execute()
+    print("response")
+    print(response)
+    print('response.hits')
+    print(response.hits)
+    print('response.hits.hits')
+    print(response.hits.hits)
+    print('response.hits.total')
+    print(response.hits.total)
+
+
+    # storys = current_app.elasticsearch.search(index='ruminate.story',
+    #                                           body={'query': {"bool": {"filter": {'term': {"author": user_id}},
+    #                                                                    "must": {'multi_match': {'query': q, 'fields':
+    #                                                                        ['title^3', 'body.cnw']}}}}}, sort='_score')
+    # print(storys)
+    # storys = Story.objects(author=user_id).search_text(q).order_by('$text_score').\
+    #     paginate(page=page, per_page=current_app.config['ITEMS_PER_PAGE'])
+    next_url = url_for('main.search', page=page + 1, q=q, user=user_id) if response.hits.total > end + 1 else None
+    prev_url = url_for('main.search', page=page - 1, q=q, user=user_id) if page > 1 else None
+    return render_template('storys.html', storys=response.hits,
                            next_url=next_url, prev_url=prev_url)
 
 

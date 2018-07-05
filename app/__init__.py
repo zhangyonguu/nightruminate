@@ -8,6 +8,7 @@ from logging.handlers import SMTPHandler, RotatingFileHandler
 import logging
 import os
 from flask_mail import Mail
+from elasticsearch import Elasticsearch
 
 mail = Mail()
 login = LoginManager()
@@ -26,6 +27,9 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     db.init_app(app)
+
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+        if app.config['ELASTICSEARCH_URL'] else None
 
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp)
