@@ -4,7 +4,12 @@
             <a href="{{ url_for('main.user', username=message.sender) }}">{{ message.sender }}</a>
             <br> {{ moment(message.timestamp).fromNow() }}
             <br>
-            <span>{{ message.content }}</span><br> {% if not message.dealed and message.content.startswith('请求') %}
+            <span>{{ message.content }}</span><br> {% if not message.dealed and message.content == "请求加你为好友" %}
+            <div id="{{ message.id }}">
+                <button onclick="agree_request(this)">同意</button>
+                <button onclick="refuse_request(this)">拒绝</button>
+            </div>
+            {% elif not message.dealed and message.content == "请求分享" %}
             <div id="{{ message.id }}">
                 <a href="{{ url_for('main.storys', redirect=1, message=message.id, next=url_for('main.messages')) }}">同意</a>
                 <button onclick="refuse_request(this)">拒绝</button>
