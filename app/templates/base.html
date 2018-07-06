@@ -1,5 +1,5 @@
-{% extends 'bootstrap/base.html' %} {% block title %} {% if title %}{{ title }} - Ruminate
-{% else %}Ruminate{% endif %} {% endblock %} {% block navbar %}
+{% extends 'bootstrap/base.html' %} {% block title %} {% if title %}{{ title }} - 静夜思
+{% else %}静夜思{% endif %} {% endblock %} {% block navbar %}
 <nav class="navbar navbar-default">
 
     <div class="container">
@@ -14,15 +14,15 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li><a href="{{ url_for('main.index') }}">首页</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_anonymous %}
-                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
                 {% else %}
                 <li>
-                    <a href="{{ url_for('main.messages') }}">Messages
+                    <a href="{{ url_for('main.messages') }}">消息
                         {% set new_messages = current_user.new_messages() %}
                         <span id="message_count" class="badge"
                               style="visibility: {% if new_messages %}visible
@@ -31,8 +31,8 @@
                         </span>
                     </a>
                 </li>
-                <li><a href="{{ url_for('main.user', username=current_user.name) }}">Profile</a></li>
-                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('main.user', username=current_user.name) }}">资料</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">注销</a></li>
                 {% endif %}
             </ul>
         </div>

@@ -1,6 +1,6 @@
-{% extends 'base.html' %} {% block title %} {{ current_user.name }} - Story {% endblock %} {% block content %} {% if not redirect %}
+{% extends 'base.html' %} {% block title %} {{ current_user.name }} - 反思录 {% endblock %} {% block content %} {% if not redirect %}
 <div class="mb-4">
-    <a href="{{ url_for('main.write_story') }}" class="btn btn-primary">New Story</a>
+    <a href="{{ url_for('main.write_story') }}" class="btn btn-primary">写反思</a>
 </div>
 {% endif %} {% if g.search_form %}
 <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search', user=current_user.id) }}">
@@ -12,8 +12,8 @@
 <table class="table">
     <thead class="thead-inverse">
         <tr>
-            <th>Story</th>
-            <th>Comments</th>
+            <th>反思</th>
+            <th>评论</th>
             <th></th>
         </tr>
     </thead>
